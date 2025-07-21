@@ -33,5 +33,23 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var configuration = app.Configuration;
+    try
+    {
+        await DbInitializer.SeedAdminAsync(services, configuration);
+    }
+    catch (Exception ex)
+    {
+        // Log or throw as needed
+        Console.WriteLine($"Seeding error: {ex.Message}");
+    }
+}
+
 
 app.Run();
